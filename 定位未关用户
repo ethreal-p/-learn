@@ -1,0 +1,38 @@
+(async function(){
+    let btn = document.createElement("button");
+    btn.innerText = "🔍 找第一个没回关我的";
+    btn.style = `position:fixed;bottom:60px;right:20px;z-index:999999;background:#f4212e;color:#fff;padding:10px 16px;border:0;border-radius:6px;cursor:pointer;`;
+    document.body.appendChild(btn);
+
+    btn.onclick = async function(){
+        btn.innerText = "加载中...";
+        for(let i=0;i<30;i++){
+            window.scrollTo(0,document.body.scrollHeight);
+            await new Promise(r=>setTimeout(r,300));
+        }
+        window.scrollTo(0,0);
+        await new Promise(r=>setTimeout(r,1000));
+
+        let list = Array.from(document.querySelectorAll('[data-testid="UserCell"]'));
+        let users = list.filter(el=>el.getBoundingClientRect().width>300);
+        let target = null;
+
+        for(let item of users){
+            let txt = item.innerText;
+            if(!txt.includes("关注了你") && !txt.includes("Follows you")){
+                item.style.border="3px solid red";
+                item.style.background="#ffebee";
+                target=item;
+                break;
+            }
+        }
+        if(target){
+            target.scrollIntoView({behavior:"auto",block:"center"});
+            window.scrollBy(0,-120);
+            btn.innerText="✅定位完成";
+        }else{
+            alert("暂无未回关用户");
+            btn.innerText="🔍 找第一个没回关我的";
+        }
+    }
+})();
